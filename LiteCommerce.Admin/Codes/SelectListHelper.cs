@@ -25,9 +25,13 @@ namespace LiteCommerce.Admin
         /// 
         /// </summary>
         /// <returns></returns>
-        public static List<SelectListItem> ListOfCategories()
+        public static List<SelectListItem> ListOfCategories(bool allowSelectAll = true)
         {
             List<SelectListItem> listCategory = new List<SelectListItem>();
+            if (allowSelectAll)
+            {
+                listCategory.Add(new SelectListItem() { Value = "",Text ="--- All Category ---"});
+            }
             foreach(var item in CatalogBLL.Category_List(""))
             {
                 listCategory.Add(new SelectListItem() { Value = Convert.ToString(item.CategoryID), Text = item.CategoryName});
@@ -38,10 +42,14 @@ namespace LiteCommerce.Admin
         /// 
         /// </summary>
         /// <returns></returns>
-        public static List<SelectListItem> ListOfSuppliers()
+        public static List<SelectListItem> ListOfSuppliers(bool allowSelectAll = true)
         {
             List<SelectListItem> listSupplier = new List<SelectListItem>();
-            foreach(var item in CatalogBLL.Supplier_ListNoPagination())
+            if (allowSelectAll)
+            {
+                listSupplier.Add(new SelectListItem() { Value = "", Text = "--- All Supplier ---" });
+            }
+            foreach (var item in CatalogBLL.Supplier_ListNoPagination())
             {
                 listSupplier.Add(new SelectListItem() { Value = Convert.ToString(item.SupplierID), Text = item.CompanyName });
             }

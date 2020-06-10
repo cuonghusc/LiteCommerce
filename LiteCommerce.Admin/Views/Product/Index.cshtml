@@ -12,7 +12,8 @@
             <div class="row">                
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <select class="form-control" name="categoryId" id="selectCategory">
+                        @Html.DropDownListFor(m => m.CategoryID,SelectListHelper.ListOfCategories(), new { @class="form-control",@id="selectCountry"})
+                        @*<select class="form-control" name="categoryId" id="selectCategory">
                             <option value="">-- All Category ---</option>
                             @foreach (var item in SelectListHelper.ListOfCategories())
                             {
@@ -26,12 +27,14 @@
                                 }
 
                             }
-                        </select>
+                        </select>*@
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <div class="form-group">
-                        <select class="form-control" name="supplierId" id="selectSupplier">
+                        @Html.DropDownListFor(m => m.SupplierID, SelectListHelper.ListOfSuppliers(),
+                            new { @class = "form-control", @id = "selectSupplier" })
+                        @*<select class="form-control" name="supplierId" id="selectSupplier">
                             <option value="">-- All Supplier ---</option>
                             @foreach (var item in SelectListHelper.ListOfSuppliers())
                             {
@@ -45,7 +48,7 @@
                                 }
 
                             }
-                        </select>
+                        </select>*@
                     </div>
                 </div>
                 <div class="col-sm-6">
