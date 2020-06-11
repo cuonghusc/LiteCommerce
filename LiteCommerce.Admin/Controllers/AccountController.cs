@@ -24,10 +24,11 @@ namespace LiteCommerce.Admin.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            HttpCookie requestCookies = Request.Cookies["userInfo"];
-            string email = Convert.ToString(requestCookies["Email"]);
-            Account model = AccountBLL.Account_Get(email);
-            return View(model);
+            //HttpCookie requestCookies = Request.Cookies["userInfo"];
+            //string email = Convert.ToString(requestCookies["Email"]);
+            //Account model = AccountBLL.Account_Get(email);
+            //return View(model);
+            return View();
         }
         /// <summary>
         /// Thay đổi mật khẩu
@@ -105,12 +106,12 @@ namespace LiteCommerce.Admin.Controllers
             Session.Abandon();
             Session.Clear();
             FormsAuthentication.SignOut();
-            foreach (string key in Request.Cookies.AllKeys)
-            {
-                HttpCookie requestCookies = Request.Cookies["userInfo"];
-                requestCookies.Expires = DateTime.Now.AddMonths(-1);
-                Response.AppendCookie(requestCookies);
-            }
+            //foreach (string key in Request.Cookies.AllKeys)
+            //{
+            //    HttpCookie requestCookies = Request.Cookies["userInfo"];
+            //    requestCookies.Expires = DateTime.Now.AddMonths(-1);
+            //    Response.AppendCookie(requestCookies);
+            //}
             return RedirectToAction("Login", "Account");
         }
         /// <summary>
@@ -126,18 +127,39 @@ namespace LiteCommerce.Admin.Controllers
             }
             else
             {
-                var newUser = AccountBLL.Account_Login(email, password);
-                if (newUser!=null)
+                //var newUser = AccountBLL.Account_Login(email, password);
+                //if (newUser!=null)
+                //{
+                //    Account account = AccountBLL.Account_Login(email, password);
+                //    FormsAuthentication.SetAuthCookie(account.AccountID.ToString(), false);
+                //    HttpCookie userInfo = new HttpCookie("userInfo");
+                //    userInfo["AccountID"] = account.AccountID.ToString();
+                //    userInfo["FullName"] = Server.UrlEncode(account.LastName +" "+ account.FirstName);
+                //    userInfo["Email"] = account.Email;
+                //    userInfo["PhotoPath"] = account.PhotoPath;
+                //    userInfo.Expires = DateTime.Now.AddDays(1);
+                //    Response.Cookies.Add(userInfo);
+                //    return RedirectToAction("Index", "Dashboard");
+                //}
+                //else
+                //{
+                //    ModelState.AddModelError("error", "Đăng nhập thất bại");
+                //    ViewBag.email = email;
+                //    return View();
+                //}
+                var userAccount = UserAccountBLL.Authorize(email, password, UserAccountTypes.Employee);
+                if(userAccount != null)
                 {
-                    Account account = AccountBLL.Account_Login(email, password);
-                    FormsAuthentication.SetAuthCookie(account.AccountID.ToString(), false);
-                    HttpCookie userInfo = new HttpCookie("userInfo");
-                    userInfo["AccountID"] = account.AccountID.ToString();
-                    userInfo["FullName"] = Server.UrlEncode(account.LastName +" "+ account.FirstName);
-                    userInfo["Email"] = account.Email;
-                    userInfo["PhotoPath"] = account.PhotoPath;
-                    userInfo.Expires = DateTime.Now.AddDays(1);
-                    Response.Cookies.Add(userInfo);
+                    WebUserData cookieData = new WebUserData()
+                    {
+                        UserID = userAccount.UserID,
+                        FullName = userAccount.FullName,
+                        GroupName = WebUserRoles.STAFF,
+                        SessionID = Session.SessionID,
+                        ClientIP = Request.UserHostAddress,
+                        Photo = userAccount.Photo
+                    };
+                    FormsAuthentication.SetAuthCookie(cookieData.ToCookieString(), false);
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else

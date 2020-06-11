@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LiteCommerce.DomainModels;
+using System.Data.SqlClient;
+using System.Data;
+using System.Security.Cryptography;
 
 namespace LiteCommerce.DataLayers.SqlServer
 {
@@ -29,11 +32,12 @@ namespace LiteCommerce.DataLayers.SqlServer
         /// <returns></returns>
         public UserAccount Authorize(string userName, string password)
         {
+            
             //TODO: Kiểm tra thông tin đăng nhập của Employee
             return new UserAccount()
             {
                 UserID = userName,
-                FullName = "FakeAccount",
+                FullName = "",
                 Photo = "/Images/pepsi.jpg"
             };
         }

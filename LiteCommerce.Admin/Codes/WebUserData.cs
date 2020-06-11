@@ -35,16 +35,15 @@ namespace LiteCommerce.Admin
         /// Dữ liệu bổ sung dùng cho mục đích khác nếu có
         /// (lưu ý: dữ liệu là chuỗi và không được chứa dấu |)
         /// </summary>
-        public string AditionalData { get; set; }
+        public string Photo { get; set; }
         /// <summary>
         /// Chuyển thông tin tài khoản đăng nhập thành chuỗi để ghi Cookie
         /// </summary>
         /// <returns></returns>
         public string ToCookieString()
         {
-            return string.Format($"{UserID}|{FullName}|{GroupName}|{LoginTime}|{SessionID}|{ClientIP}|{AditionalData}");
+            return string.Format($"{UserID}|{FullName}|{GroupName}|{LoginTime}|{SessionID}|{ClientIP}|{Photo}");
         }
-
         /// <summary>
         /// Lấy thông tin tài khoản đăng nhập từ Cookie
         /// </summary>
@@ -65,7 +64,7 @@ namespace LiteCommerce.Admin
                         LoginTime = Convert.ToDateTime(infos[3]),
                         SessionID = infos[4],
                         ClientIP = infos[5],
-                        AditionalData = infos[6]
+                        Photo = infos[6]
                     };
                 }
                 else

@@ -21,6 +21,7 @@ namespace LiteCommerce.Admin
             CatalogBLL.Initialize(connectionString);
             HumanResourceBLL.Initialize(connectionString);
             AccountBLL.Initialize(connectionString);
+            UserAccountBLL.Initialize(connectionString);
             //TODO: Bổ sung khởi tạo các BLL khác khi cần sử dụng :3
         }
     }
