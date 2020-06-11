@@ -125,6 +125,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Codes\AppSettings.cs" />
     <Compile Include="Codes\SelectListHelper.cs" />
+    <Compile Include="Codes\WebUserData.cs" />
+    <Compile Include="Codes\WebUserExtensions.cs" />
+    <Compile Include="Codes\WebUserPrincipal.cs" />
+    <Compile Include="Codes\WebUserRoles.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />

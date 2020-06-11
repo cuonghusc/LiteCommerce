@@ -47,6 +47,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportBLL.cs" />
     <Compile Include="SaleManagementBLL.cs" />
+    <Compile Include="UserAccountBLL.cs" />
+    <Compile Include="UserAccountTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LiteCommerce.DataLayers\LiteCommerce.DataLayers.csproj">

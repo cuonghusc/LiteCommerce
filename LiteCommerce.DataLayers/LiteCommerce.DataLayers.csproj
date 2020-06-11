@@ -49,12 +49,15 @@
     <Compile Include="IProductDAL.cs" />
     <Compile Include="IShipperDAL.cs" />
     <Compile Include="ISupplierDAL.cs" />
+    <Compile Include="IUserAccountDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServer\AccountDAL.cs" />
     <Compile Include="SqlServer\CategoryDAL.cs" />
     <Compile Include="SqlServer\CountryDAL.cs" />
     <Compile Include="SqlServer\CustomerDAL.cs" />
+    <Compile Include="SqlServer\CustomerUserAccountDAL.cs" />
     <Compile Include="SqlServer\EmployeeDAL.cs" />
+    <Compile Include="SqlServer\EmployeeUserAccountDAL.cs" />
     <Compile Include="SqlServer\OrderDAL.cs" />
     <Compile Include="SqlServer\ProductDAL.cs" />
     <Compile Include="SqlServer\ShipperDAL.cs" />
