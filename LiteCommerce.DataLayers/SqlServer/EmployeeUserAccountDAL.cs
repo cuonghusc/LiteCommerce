@@ -45,13 +45,15 @@ namespace LiteCommerce.DataLayers.SqlServer
                 sb.Append(hash[i].ToString("x2"));
             }
             string md5Password = sb.ToString();
+            // Xong mã hóa MD5
             UserAccount data = null;
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = @"SELECT TOP 1 * FROM Employees WHERE Email = @email AND Password = @password";
+                cmd.CommandText = @"SELECT EmployeeID,LastName,FirstName,PhotoPath
+                                    FROM Employees WHERE Email = @email AND Password = @password";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = connection;
                 cmd.Parameters.AddWithValue("@email", userName);
