@@ -20,5 +20,9 @@ namespace LiteCommerce.DomainModels
         /// 
         /// </summary>
         public string Photo { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Email { get; set; }
     }
 }

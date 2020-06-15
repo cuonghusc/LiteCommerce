@@ -37,12 +37,16 @@ namespace LiteCommerce.Admin
         /// </summary>
         public string Photo { get; set; }
         /// <summary>
+        /// Địa chỉ email của tài khoản
+        /// </summary>
+        public string Email { get; set; }
+        /// <summary>
         /// Chuyển thông tin tài khoản đăng nhập thành chuỗi để ghi Cookie
         /// </summary>
-        /// <returns></returns>
+        /// <returns></returns>        
         public string ToCookieString()
         {
-            return string.Format($"{UserID}|{FullName}|{GroupName}|{LoginTime}|{SessionID}|{ClientIP}|{Photo}");
+            return string.Format($"{UserID}|{FullName}|{GroupName}|{LoginTime}|{SessionID}|{ClientIP}|{Photo}|{Email}");
         }
         /// <summary>
         /// Lấy thông tin tài khoản đăng nhập từ Cookie
@@ -54,7 +58,7 @@ namespace LiteCommerce.Admin
             try
             {
                 string[] infos = cookie.Split('|');
-                if (infos.Length == 7)
+                if (infos.Length == 8)
                 {
                     return new WebUserData()
                     {
@@ -64,7 +68,8 @@ namespace LiteCommerce.Admin
                         LoginTime = Convert.ToDateTime(infos[3]),
                         SessionID = infos[4],
                         ClientIP = infos[5],
-                        Photo = infos[6]
+                        Photo = infos[6],
+                        Email = infos[7]
                     };
                 }
                 else

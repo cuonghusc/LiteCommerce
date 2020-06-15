@@ -1,6 +1,5 @@
 ﻿using LiteCommerce.BusinessLayers;
 using LiteCommerce.DomainModels;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -24,10 +23,6 @@ namespace LiteCommerce.Admin.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            //HttpCookie requestCookies = Request.Cookies["userInfo"];
-            //string email = Convert.ToString(requestCookies["Email"]);
-            //Account model = AccountBLL.Account_Get(email);
-            //return View(model);
             WebUserData userData = User.GetUserData();
             Employee model = HumanResourceBLL.Employee_Get(Convert.ToInt32(userData.UserID));
             return View(model);
@@ -108,12 +103,6 @@ namespace LiteCommerce.Admin.Controllers
             Session.Abandon();
             Session.Clear();
             FormsAuthentication.SignOut();
-            //foreach (string key in Request.Cookies.AllKeys)
-            //{
-            //    HttpCookie requestCookies = Request.Cookies["userInfo"];
-            //    requestCookies.Expires = DateTime.Now.AddMonths(-1);
-            //    Response.AppendCookie(requestCookies);
-            //}
             return RedirectToAction("Login", "Account");
         }
         /// <summary>
@@ -129,26 +118,6 @@ namespace LiteCommerce.Admin.Controllers
             }
             else
             {
-                //var newUser = AccountBLL.Account_Login(email, password);
-                //if (newUser!=null)
-                //{
-                //    Account account = AccountBLL.Account_Login(email, password);
-                //    FormsAuthentication.SetAuthCookie(account.AccountID.ToString(), false);
-                //    HttpCookie userInfo = new HttpCookie("userInfo");
-                //    userInfo["AccountID"] = account.AccountID.ToString();
-                //    userInfo["FullName"] = Server.UrlEncode(account.LastName +" "+ account.FirstName);
-                //    userInfo["Email"] = account.Email;
-                //    userInfo["PhotoPath"] = account.PhotoPath;
-                //    userInfo.Expires = DateTime.Now.AddDays(1);
-                //    Response.Cookies.Add(userInfo);
-                //    return RedirectToAction("Index", "Dashboard");
-                //}
-                //else
-                //{
-                //    ModelState.AddModelError("error", "Đăng nhập thất bại");
-                //    ViewBag.email = email;
-                //    return View();
-                //}
                 var userAccount = UserAccountBLL.Authorize(email, password, UserAccountTypes.Employee);
                 if(userAccount != null)
                 {
@@ -159,7 +128,8 @@ namespace LiteCommerce.Admin.Controllers
                         GroupName = WebUserRoles.STAFF,
                         SessionID = Session.SessionID,
                         ClientIP = Request.UserHostAddress,
-                        Photo = userAccount.Photo
+                        Photo = userAccount.Photo,
+                        Email = userAccount.Email
                     };
                     FormsAuthentication.SetAuthCookie(cookieData.ToCookieString(), false);
                     return RedirectToAction("Index", "Dashboard");
@@ -200,74 +170,67 @@ namespace LiteCommerce.Admin.Controllers
         [HttpPost]
         public ActionResult Edit(Account model, HttpPostedFileBase uploadPhoto)
         {
-            //if (string.IsNullOrEmpty(model.Email))
-            //{
-            //    ModelState.AddModelError("Email", "Email is required");
-            //}
-            //if (string.IsNullOrEmpty(model.HomePhone))
-            //{
-            //    ModelState.AddModelError("HomePhone", "Phone is required");
-            //}
-            //if (string.IsNullOrEmpty(model.Address))
-            //{
-            //    ModelState.AddModelError("Address", "Address is required");
-            //}
-            //if (string.IsNullOrEmpty(model.Country))
-            //{
-            //    ModelState.AddModelError("Country", "Country is required");
-            //}
-            //if (string.IsNullOrEmpty(model.City))
-            //{
-            //    ModelState.AddModelError("City", "City is required");
-            //}
-            //if (string.IsNullOrEmpty(model.Notes))
-            //{
-            //    model.Notes = "";
-            //}
-            //HttpCookie requestCookies = Request.Cookies["userInfo"];
-            //model.AccountID = Convert.ToInt32(requestCookies["AccountID"]);
-            //string emailCookie = Convert.ToString(requestCookies["Email"]);
-            //if (!HumanResourceBLL.Employee_CheckEmail(model.AccountID, model.Email, "update") && (model.Email != emailCookie))
-            //{
-            //    ModelState.AddModelError("Email", "Email ready exist");
-            //}
-            ////Upload ảnh
-            //if (uploadPhoto != null && uploadPhoto.ContentLength > 0)
-            //{
-            //    string filePath = Path.Combine(Server.MapPath("~/Images"), uploadPhoto.FileName);
-            //    uploadPhoto.SaveAs(filePath);
-            //    model.PhotoPath = "/Images/" + uploadPhoto.FileName;
-            //    requestCookies.Values["PhotoPath"] = Convert.ToString(model.PhotoPath);
-            //    Response.SetCookie(requestCookies);
-            //}
-            //else if (model.PhotoPath == null)
-            //{
-            //    model.PhotoPath = Convert.ToString(requestCookies["PhotoPath"]);
-            //}
-            //DateTime hireDate = DateTime.Today;
-            //if ((hireDate.Year - (model.BirthDate).Year) < 18)
-            //{
-            //    ModelState.AddModelError("BirthDate", "You must be over 18 years old");
-            //}
-            ////Kiểm tra có tồn tại bất kỳ lỗi nào hay không
-            //if (!ModelState.IsValid)
-            //{
-            //    return View(model);
-            //}
+            if (string.IsNullOrEmpty(model.Notes))
+            {
+                model.Notes = "";
+            }
+            WebUserData userData = User.GetUserData();
+            model.AccountID = Convert.ToInt32(userData.UserID);
+            string emailCookie = userData.Email;
 
-            //try
-            //{
-            //    bool rs = AccountBLL.Account_Update(model);
-            //    requestCookies.Values["Email"] = model.Email;
-            //    Response.SetCookie(requestCookies);
-            //    return RedirectToAction("Index");                               
-            //}
-            //catch (Exception e)
-            //{
-            //    ModelState.AddModelError("", e.Message + ":" + e.StackTrace);
-            //    return View(model);
-            //}
-            return RedirectToAction("Index");  
+            if (!HumanResourceBLL.Employee_CheckEmail(model.AccountID, model.Email, "update") && (model.Email != emailCookie))
+            {
+                ModelState.AddModelError("Email", "Email ready exist");
+            }
+            //Upload ảnh
+            if (uploadPhoto != null && uploadPhoto.ContentLength > 0)
+            {
+                string filePath = Path.Combine(Server.MapPath("~/Images"), uploadPhoto.FileName);
+                uploadPhoto.SaveAs(filePath);
+                model.PhotoPath = "/Images/" + uploadPhoto.FileName;
+            }
+            else if (model.PhotoPath == null)
+            {
+                model.PhotoPath = userData.Photo;
+            }
+            DateTime hireDate = DateTime.Today;
+            if ((hireDate.Year - (model.BirthDate).Year) < 18)
+            {
+                ModelState.AddModelError("BirthDate", "You must be over 18 years old");
+            }
+            //Kiểm tra có tồn tại bất kỳ lỗi nào hay không
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                
+                bool rs = AccountBLL.Account_Update(model);
+                if((model.Email != userData.Email) || (model.PhotoPath != userData.Photo))
+                {
+                    //
+                    WebUserData cookieData = new WebUserData()
+                    {
+                        UserID = model.AccountID.ToString(),
+                        FullName = model.LastName + " " + model.FirstName,
+                        GroupName = WebUserRoles.STAFF,
+                        SessionID = Session.SessionID,
+                        ClientIP = Request.UserHostAddress,
+                        Photo = model.PhotoPath,
+                        Email = model.Email
+                    };
+                    FormsAuthentication.SetAuthCookie(cookieData.ToCookieString(), false);
+                    return RedirectToAction("Index");
+                }
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("", e.Message + ":" + e.StackTrace);
+                return View(model);
+            }
         }
     }
 }

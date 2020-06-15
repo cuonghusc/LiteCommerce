@@ -91,7 +91,8 @@ namespace LiteCommerce.Admin
                 {
                     UserID = "",
                     GroupName = WebUserRoles.ANONYMOUS,
-                    FullName = ""
+                    FullName = "",
+                    Email = ""
                 })
             {
             }
