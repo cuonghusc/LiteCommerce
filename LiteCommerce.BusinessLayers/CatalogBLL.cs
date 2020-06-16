@@ -354,6 +354,18 @@ namespace LiteCommerce.BusinessLayers
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="productID"></param>
+        /// <param name="attributeName"></param>
+        /// <param name="attributeValues"></param>
+        /// <param name="displayOrder"></param>
+        /// <returns></returns>
+        public static bool Product_UpdateAttribute(string productID, string[] attributeName, string[] attributeValues, string[] displayOrder)
+        {
+            return ProductDB.UpdateAttribute(productID, attributeName, attributeValues, displayOrder);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <returns></returns>
         public static List<Countries> Country_List()
         {

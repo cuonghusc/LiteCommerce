@@ -41,5 +41,20 @@ namespace LiteCommerce.DataLayers.SqlServer
                 Photo = "/Images/pepsi.jpg"
             };
         }
+
+        public bool ChangePw(string newPassword, string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CheckPassword(string oldPassword, string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Update(Employee model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

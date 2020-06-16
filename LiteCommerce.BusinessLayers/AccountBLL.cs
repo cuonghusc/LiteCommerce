@@ -53,9 +53,9 @@ namespace LiteCommerce.BusinessLayers
         /// <param name="oldPassword"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static bool Account_CheckPass(string oldPassword, int id)
+        public static bool Account_CheckPass(string oldPassword, string email)
         {
-            return AccountDB.CheckPassword(oldPassword, id);
+            return AccountDB.CheckPassword(oldPassword, email);
         }
         /// <summary>
         /// 
@@ -63,9 +63,9 @@ namespace LiteCommerce.BusinessLayers
         /// <param name="newPassword"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static bool Account_ChangePwd(string newPassword, int id)
+        public static bool Account_ChangePwd(string newPassword, string email)
         {
-            return AccountDB.ChangePw(newPassword, id);
+            return AccountDB.ChangePw(newPassword, email);
         }
     }
 }

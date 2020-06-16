@@ -24,5 +24,9 @@ namespace LiteCommerce.DomainModels
         /// 
         /// </summary>
         public string Email { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string GroupName { get; set; }
     }
 }

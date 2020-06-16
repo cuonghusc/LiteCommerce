@@ -53,5 +53,6 @@ namespace LiteCommerce.DataLayers
         /// <param name="productID"></param>
         /// <returns></returns>
         List<ProductAttributes> GetAttribute(string productID);
+        bool UpdateAttribute(string productID, string[] attributeName, string[] attributeValues, string[] displayOrder);
     }
 }

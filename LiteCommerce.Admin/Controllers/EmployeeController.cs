@@ -13,24 +13,28 @@ namespace LiteCommerce.Admin.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Authorize]
+    [Authorize(Roles = WebUserRoles.Administrator)]
     public class EmployeeController : Controller
     {
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index(int page = 1, string searchValue = "")
+        public ActionResult Index(int page = 1, string searchValue = "",string country = "")
         {
-            HttpCookie requestCookie = Request.Cookies["userInfo"];
-            int idCookie = Convert.ToInt32(requestCookie["AccountID"]);
+            //HttpCookie requestCookie = Request.Cookies["userInfo"];
+            //int idCookie = Convert.ToInt32(requestCookie["AccountID"]);
+
+            WebUserData userData = User.GetUserData();
+            int idCookie = Convert.ToInt32(userData.UserID);
             var model = new Models.EmployeePaginationResult()
             {
                 Page = page,
                 PageSize = AppSettings.DefaultPageSize,
-                RowCount = HumanResourceBLL.Employee_Count(searchValue,idCookie),
-                Data = HumanResourceBLL.Employee_List(page, AppSettings.DefaultPageSize, searchValue,idCookie),
+                RowCount = HumanResourceBLL.Employee_Count(searchValue,country,idCookie),
+                Data = HumanResourceBLL.Employee_List(page, AppSettings.DefaultPageSize, searchValue, country, idCookie),
                 SearchValue = searchValue,
+                Country = country,
             };
             return View(model);
         }
@@ -54,8 +58,12 @@ namespace LiteCommerce.Admin.Controllers
             }
             else
             {
-                HttpCookie requestCookie = Request.Cookies["userInfo"];
-                string idCookie = requestCookie["AccountID"];
+                //HttpCookie requestCookie = Request.Cookies["userInfo"];
+                //string idCookie = requestCookie["AccountID"];
+
+                WebUserData userData = User.GetUserData();
+                string idCookie = userData.UserID;
+
                 if (id.Equals(idCookie))
                 {
                     return Redirect("~/Account");

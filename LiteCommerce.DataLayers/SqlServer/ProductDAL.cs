@@ -293,10 +293,10 @@ namespace LiteCommerce.DataLayers.SqlServer
                 connection.Open();
                 using (SqlCommand cmd = new SqlCommand())
                 {
-                    cmd.CommandText = @"SELECT * FROM ProductAttributes WHERE ProductID = @productID";
+                    cmd.CommandText = @"SELECT * FROM ProductAttributes WHERE ProductID = @productID ORDER BY DisplayOrder";
                     cmd.CommandType = CommandType.Text;
                     cmd.Connection = connection;
-                    cmd.Parameters.AddWithValue("@productID", productID);
+                    cmd.Parameters.AddWithValue("@productID", Convert.ToInt32(productID));
                     using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
                     {
                         while (dbReader.Read())
@@ -315,6 +315,40 @@ namespace LiteCommerce.DataLayers.SqlServer
                 connection.Close();
             }
             return data;
+        }
+
+        public bool UpdateAttribute(string productID, string[] attributeName, string[] attributeValues, string[] displayOrder)
+        {
+            int result = 0;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"DELETE FROM ProductAttributes WHERE ProductID = @productID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = connection;
+                cmd.Parameters.Add("@productID", SqlDbType.Int).Value = Convert.ToInt32(productID);
+                cmd.ExecuteNonQuery();
+
+                SqlCommand cmd2 = new SqlCommand();
+                cmd2.CommandText = @"INSERT INTO ProductAttributes (ProductID,AttributeName,AttributeValues,DisplayOrder) VALUES (@ProductID,@AttributeName,@AttributeValues,@DisplayOrder)";
+                cmd2.CommandType = CommandType.Text;
+                cmd2.Connection = connection;
+                cmd2.Parameters.AddWithValue("@ProductID", productID);
+                cmd2.Parameters.Add("@AttributeName", SqlDbType.NVarChar);
+                cmd2.Parameters.Add("@AttributeValues", SqlDbType.NVarChar);
+                cmd2.Parameters.Add("@DisplayOrder", SqlDbType.Int);
+                for (int i = 0;i<attributeName.Length;i++)
+                {
+                    cmd2.Parameters["@AttributeName"].Value = attributeName[i];
+                    cmd2.Parameters["@AttributeValues"].Value = attributeValues[i];
+                    cmd2.Parameters["@DisplayOrder"].Value = (displayOrder[i]) ==null?1: Convert.ToInt32(displayOrder[i]);
+                    result += cmd2.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+            return result > 0;
         }
     }
 }

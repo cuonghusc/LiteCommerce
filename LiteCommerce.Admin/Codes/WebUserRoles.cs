@@ -13,14 +13,14 @@ namespace LiteCommerce.Admin
         /// <summary>
         /// Không xác định
         /// </summary>
-        public const string ANONYMOUS = "anonymous";
+        public const string Accountant = "Accountant";
         /// <summary>
         /// Nhân viên
         /// </summary>
-        public const string STAFF = "staff";
+        public const string Saleman = "Saleman";
         /// <summary>
         /// Quản trị hệ thống
         /// </summary>
-        public const string ADMINISTRATOR = "administrator";
+        public const string Administrator = "Administrator";
     }
 }

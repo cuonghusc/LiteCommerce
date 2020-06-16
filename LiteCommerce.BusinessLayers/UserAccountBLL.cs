@@ -46,5 +46,21 @@ namespace LiteCommerce.BusinessLayers
             }
             return userAccountDB.Authorize(userName,password);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="newPassword"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static bool Account_ChangePwd(string newPassword, string email)
+        {
+            IUserAccountDAL UserAccountDB = new EmployeeUserAccountDAL(connectionString);
+            return UserAccountDB.ChangePw(newPassword, email);
+        }
+        public static bool Account_Update(Employee model)
+        {
+            IUserAccountDAL UserAccountDB = new EmployeeUserAccountDAL(connectionString);
+            return UserAccountDB.Update(model);
+        }
     }
 }

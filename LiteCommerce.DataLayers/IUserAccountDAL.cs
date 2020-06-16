@@ -18,5 +18,25 @@ namespace LiteCommerce.DataLayers
         /// <param name="password"></param>
         /// <returns></returns>
         UserAccount Authorize(string userName, string password);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="newPassword"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        bool ChangePw(string newPassword, string email);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldPassword"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        bool CheckPassword(string oldPassword, string email);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        bool Update(Employee model);
     }
 }

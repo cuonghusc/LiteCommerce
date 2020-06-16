@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -46,15 +48,15 @@ namespace LiteCommerce.Admin.Controllers
         [HttpPost]
         public ActionResult ChangePwd(string oldPassword,string newPassword,string reNewPassword)
         {
-            HttpCookie requestCookie = Request.Cookies["userInfo"];
-            int id = Convert.ToInt32(requestCookie["AccountID"]);
+            WebUserData userData = User.GetUserData();
+            string email = Convert.ToString(userData.Email);
             if (string.IsNullOrEmpty(oldPassword))
             {
                 ModelState.AddModelError("OldPassword", "OldPassword is required");
             }
             else
             {
-                if (!AccountBLL.Account_CheckPass(oldPassword,id))
+                if (!AccountBLL.Account_CheckPass(oldPassword, email))
                 {
                     ModelState.AddModelError("OldPassword", "Old password incorrect");
                 }
@@ -88,8 +90,13 @@ namespace LiteCommerce.Admin.Controllers
             {
                 return View();
             }
-            if (AccountBLL.Account_ChangePwd(newPassword, id)){
-                return RedirectToAction("SignOut");
+            if (UserAccountBLL.Account_ChangePwd(newPassword, email))
+            {
+                ModelState.AddModelError("success", "Cập nhật thành công");
+                ViewBag.OldPassword = "";
+                ViewBag.NewPassword = "";
+                ViewBag.ReNewPassword = "";
+                return View();
             }
             ModelState.AddModelError("error", "Cập nhật không thành công");
             return RedirectToAction("ChangePwd");
@@ -125,7 +132,7 @@ namespace LiteCommerce.Admin.Controllers
                     {
                         UserID = userAccount.UserID,
                         FullName = userAccount.FullName,
-                        GroupName = WebUserRoles.STAFF,
+                        GroupName = userAccount.GroupName,
                         SessionID = Session.SessionID,
                         ClientIP = Request.UserHostAddress,
                         Photo = userAccount.Photo,
@@ -141,15 +148,6 @@ namespace LiteCommerce.Admin.Controllers
                     return View();
                 }
             }            
-        }
-        /// <summary>
-        /// Quên mật khẩu
-        /// </summary>
-        /// <returns></returns>
-        [AllowAnonymous]
-        public ActionResult ForgotPassword()
-        {
-            return null;
         }
         /// <summary>
         /// Hiển thị form chỉnh sửa thông tin người dùng
@@ -168,17 +166,17 @@ namespace LiteCommerce.Admin.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Edit(Account model, HttpPostedFileBase uploadPhoto)
+        public ActionResult Edit(Employee model, HttpPostedFileBase uploadPhoto)
         {
             if (string.IsNullOrEmpty(model.Notes))
             {
                 model.Notes = "";
             }
             WebUserData userData = User.GetUserData();
-            model.AccountID = Convert.ToInt32(userData.UserID);
+            model.EmployeeID = Convert.ToInt32(userData.UserID);
             string emailCookie = userData.Email;
 
-            if (!HumanResourceBLL.Employee_CheckEmail(model.AccountID, model.Email, "update") && (model.Email != emailCookie))
+            if (!HumanResourceBLL.Employee_CheckEmail(model.EmployeeID, model.Email, "update") && (model.Email != emailCookie))
             {
                 ModelState.AddModelError("Email", "Email ready exist");
             }
@@ -206,16 +204,17 @@ namespace LiteCommerce.Admin.Controllers
 
             try
             {
-                
-                bool rs = AccountBLL.Account_Update(model);
+                WebUserData userDatas = User.GetUserData();
+                string role = userDatas.GroupName;
+                bool rs = UserAccountBLL.Account_Update(model);
                 if((model.Email != userData.Email) || (model.PhotoPath != userData.Photo))
                 {
                     //
                     WebUserData cookieData = new WebUserData()
                     {
-                        UserID = model.AccountID.ToString(),
+                        UserID = model.EmployeeID.ToString(),
                         FullName = model.LastName + " " + model.FirstName,
-                        GroupName = WebUserRoles.STAFF,
+                        GroupName = role,
                         SessionID = Session.SessionID,
                         ClientIP = Request.UserHostAddress,
                         Photo = model.PhotoPath,
@@ -231,6 +230,80 @@ namespace LiteCommerce.Admin.Controllers
                 ModelState.AddModelError("", e.Message + ":" + e.StackTrace);
                 return View(model);
             }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult ForgotPassword(string Email = "")
+        {
+            if (string.IsNullOrEmpty(Email))
+            {
+                ModelState.AddModelError("Email", "Email is required");
+            }
+            try
+            {
+                if (AccountBLL.Account_Get(Email) != null)
+                {
+                    string code = "1997";
+                    return Redirect("/Account/ChangeForgotPassword?email=" + Email+"&code="+code.GetHashCode());
+
+                }
+                ModelState.AddModelError("Email", "Email is not exist");
+                return View();
+            }
+            catch(Exception e)
+            {
+                ModelState.AddModelError("Email", "Email is not exist");
+                return View();
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet]
+        public ActionResult ChangeForgotPassword(string email = "")
+        {
+            ViewBag.Email = email;
+            return View();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult ChangeForgotPassword(string Email = "", string Password = "")
+        {
+            if (AccountBLL.Account_Get(Email) == null)
+            {
+                ModelState.AddModelError("error", "Cập nhật không thành công");
+                return RedirectToAction("ChangePwd");
+            }
+            if (UserAccountBLL.Account_ChangePwd(Password, Email))
+            {
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
         }
     }
 }

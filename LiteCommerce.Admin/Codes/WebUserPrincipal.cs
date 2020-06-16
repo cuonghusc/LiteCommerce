@@ -34,14 +34,15 @@ namespace LiteCommerce.Admin
         /// <returns></returns>
         public bool IsInRole(string role)
         {
-            if (role.Equals(userData.GroupName))
+            string[] arrRole = userData.GroupName.Split(',');
+            foreach(var item in arrRole)
             {
-                return true;
+                if (role.Equals(item))
+                {
+                    return true;
+                }                
             }
-            else
-            {
-                return false;
-            }
+            return false;    
         }
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace LiteCommerce.Admin
                 : base(new AnonymousIdentity(), new WebUserData()
                 {
                     UserID = "",
-                    GroupName = WebUserRoles.ANONYMOUS,
+                    GroupName = "",
                     FullName = "",
                     Email = ""
                 })

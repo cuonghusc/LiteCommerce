@@ -150,5 +150,66 @@
             alert("ok");
         });
     </script>
+    <script>
+        let count = 1;
+        multi_attribute(count);
+        function multi_attribute(x) {
+            html = `<tr class="increment">
+                        <td>
+                            <input type="text" name="AttributeName[]" class="form-control"  />
+                        </td>
+                        <td>
+                            <input type="text" name="AttributeValues[]" class="form-control" />
+                        </td>
+                        <td>
+                            <input type="number" name="DisplayOrder[]" class="form-control" min="1"/>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" id="removeRecord"><i class="fa fa-times-circle"></i></button>
+                        </td>
+                    </tr>`;
+            $('#inputAttribute').append(html);
+        }
+        $(document).on('click', '#addRecord', function () {
+            count++;
+            console.log(count);
+            multi_attribute(count);
+        });
+        $(document).on('click', '#removeRecord', function () {
+            count--;
+            console.log(count);
+            $(this).closest(".increment").remove();
+        });
+    </script>
+    <script>
+        let id = document.getElementById("idProduct").value;
+        fetchAttribute(id);
+        function fetchAttribute(id) {
+            let method = 'GET';
+            $.ajax({
+                url: '@Url.Action("ajaxAttribute", "Product")',
+                method: method,
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                data:{id:id},
+                async : true,
+                success: function (data) {
+                    let att = ``;
+                    $.each(data.Data, function (key, value) {
+                        att += `
+                            <tr>
+                                <td>${value["AttributeName"]}</td>
+                                <td>${value["AttributeValues"]}</td>
+                            </tr>`;
+                    });
+                    
+                    document.getElementById("productAttribute").innerHTML = att;
+                },
+                error:function(data){
+                    alert('Lỗi');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

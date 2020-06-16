@@ -8,7 +8,7 @@ namespace LiteCommerce.Admin.Controllers
 {
     public class _TestController : Controller
     {
-        [Authorize(Roles = WebUserRoles.ADMINISTRATOR)]
+        [Authorize(Roles = WebUserRoles.Accountant)]
         public ActionResult CheckAuth()
         {
             return Json(User.GetUserData(), JsonRequestBehavior.AllowGet);

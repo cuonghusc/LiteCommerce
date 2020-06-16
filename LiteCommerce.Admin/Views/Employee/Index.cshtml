@@ -9,7 +9,27 @@
     <!-- form start -->
     <form role="form" action="~/Employee" method="get">
         <div class="box-body">
-            <div class="input-group input-group-sm">
+            <div class="form-group col-sm-6">
+                @Html.DropDownListFor(m => m.Country, SelectListHelper.ListOfCountries(),
+                            new { @class = "form-control", @id = "selectCountry" })
+                @*<select class="form-control" name="country" id="selectCountry">
+                    <option value="" selected>--All Country--</option>
+                    @foreach (var item in SelectListHelper.ListOfCountries())
+                    {
+                        if (item.ToString() == Model.Country)
+                        {
+                            <option value="@item.Value" selected>@item.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+
+                    }
+                </select>*@
+
+            </div>
+            <div class="input-group col-sm-6">
                 <input type="text" class="form-control" placeholder="Type anything" name="searchValue" value="@Model.SearchValue">
                 <span class="input-group-btn">
                     <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-search"></i></button>
@@ -100,23 +120,23 @@
         <ul class="pagination pagination-sm no-margin pull-right">
             @if (Model.Page != 1)
             {
-                <li><a href="~/Employee?@paramSearch&page=1">First</a></li>
+                <li><a href="~/Employee?@paramSearch&page=1&country=@Model.Country">First</a></li>
             }
             @for (int page = 1; page <= Model.PageCount; page++)
             {
                 if (Model.Page == page)
                 {
-                    <li class="active"><a href="~/Employee?@paramSearch&page=@page">@page</a></li>
+                    <li class="active"><a href="~/Employee?@paramSearch&page=@page&country=@Model.Country">@page</a></li>
                 }
                 else
                 {
-                    <li><a href="~/Employee?@paramSearch&page=@page">@page</a></li>
+                    <li><a href="~/Employee?@paramSearch&page=@page&country=@Model.Country">@page</a></li>
                 }
 
             }
             @if (Model.Page != Model.PageCount)
             {
-                <li><a href="~/Employee?@paramSearch&page=@Model.PageCount">Last</a></li>
+                <li><a href="~/Employee?@paramSearch&page=@Model.PageCount&country=@Model.Country">Last</a></li>
             }     
         </ul>
     </div>

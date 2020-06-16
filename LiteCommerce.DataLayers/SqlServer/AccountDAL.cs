@@ -32,7 +32,7 @@ namespace LiteCommerce.DataLayers.SqlServer
         /// <param name="newPassword"></param>
         /// <param name="reNewPassword"></param>
         /// <returns></returns>
-        public bool ChangePw(string newPassword,int id)
+        public bool ChangePw(string newPassword,string email)
         {
             int rowsAffected;
             MD5 md5 = MD5.Create();
@@ -52,10 +52,10 @@ namespace LiteCommerce.DataLayers.SqlServer
                 cmd.CommandText = @"UPDATE Employees
                                     SET                                    
                                         Password = @Password
-                                    WHERE EmployeeID = @EmployeeID";
+                                    WHERE Email = @Email";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = connection;
-                cmd.Parameters.AddWithValue("@EmployeeID", id);
+                cmd.Parameters.AddWithValue("@Email", email);
                 cmd.Parameters.AddWithValue("@Password", md5Password);
                 rowsAffected = Convert.ToInt32(cmd.ExecuteNonQuery());
                 connection.Close();
@@ -197,7 +197,7 @@ namespace LiteCommerce.DataLayers.SqlServer
         /// <param name="oldPassword"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool CheckPassword(string oldPassword,int id)
+        public bool CheckPassword(string oldPassword,string email)
         {
             int dem;
             MD5 md5 = MD5.Create();
@@ -214,10 +214,10 @@ namespace LiteCommerce.DataLayers.SqlServer
                 connection.Open();
                 using (SqlCommand cmd = new SqlCommand())
                 {
-                    cmd.CommandText = @"SELECT * FROM Employees WHERE (EmployeeID = @id) AND (Password = @oldPassword)";
+                    cmd.CommandText = @"SELECT * FROM Employees WHERE (Email = @Email) AND (Password = @oldPassword)";
                     cmd.CommandType = CommandType.Text;
                     cmd.Connection = connection;
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@Email", email);
                     cmd.Parameters.AddWithValue("@oldPassword", md5Password);
 
                     dem = Convert.ToInt32(cmd.ExecuteScalar());

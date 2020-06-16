@@ -8,6 +8,11 @@
     <!-- form start -->
     <form action="~/Account/ChangePwd" method="post" role="form">
         <div class="box-body">
+            @if (ViewData.ModelState["success"] != null && ViewData.ModelState["success"].Errors.Any())
+            {
+                <div class="alert alert-success" role="alert">@Html.ValidationMessage("success")</div>
+            }
+            
             <div class="form-group">
                 <label>Old Password:</label>
                 <input type="password" name="oldPassword" value="@ViewBag.OldPassword" class="form-control">
@@ -23,6 +28,7 @@
                 <input type="password" name="reNewPassword" value="@ViewBag.ReNewPassword" class="form-control">
                 @Html.ValidationMessage("ReNewPassword", new { @style = "color: red" })
             </div>
+            @*@Html.ValidationSummary("")*@
         </div>
         <!-- /.box-body -->
         <div class="box-footer">

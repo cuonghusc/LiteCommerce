@@ -7250,6 +7250,8 @@
     <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="Views\Product\Detail.cshtml" />
     <Content Include="Views\Product\Attribute.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Views\Account\ChangeForgotPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

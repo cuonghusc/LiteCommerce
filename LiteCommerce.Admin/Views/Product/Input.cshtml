@@ -75,11 +75,12 @@
             </div>
             <div class="form-group">
                 <label>Description:</label>
-                <textarea class="form-control" name="Description">@Model.Descriptions</textarea>
+                <textarea class="form-control" name="Descriptions">@Model.Descriptions</textarea>
             </div>
             <div class="form-group">
                 <label>Product's Photo:</label>
-                <input type="file" name="uploadPhoto" class="form-control" accept="image/*">
+                <input type="file" name="uploadPhoto" class="form-control" accept="image/*" >
+                <input type="hidden" value="@Model.PhotoPath" name="PhotoPath" />
             </div>
             <!-- /.box-body -->
             <div class="box-footer">

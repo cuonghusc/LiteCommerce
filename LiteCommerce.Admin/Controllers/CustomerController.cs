@@ -11,7 +11,7 @@ namespace LiteCommerce.Admin.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Authorize]
+    [Authorize(Roles = WebUserRoles.Accountant)]
     public class CustomerController : Controller
     {
         /// <summary>

@@ -13,8 +13,12 @@ namespace LiteCommerce.Admin
         /// 
         /// </summary>
         /// <returns></returns>
-        public static List<SelectListItem> ListOfCountries() {
+        public static List<SelectListItem> ListOfCountries(bool allowSelectAll = true) {
             List<SelectListItem> listCountries = new List<SelectListItem>();
+            if (allowSelectAll)
+            {
+                listCountries.Add(new SelectListItem() { Value = "", Text = "--- All Country ---" });
+            }
             foreach (var item in CatalogBLL.Country_List())
             {
                 listCountries.Add(new SelectListItem() { Value = item.Country,Text= item.Country });

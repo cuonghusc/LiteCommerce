@@ -12,5 +12,9 @@ namespace LiteCommerce.Admin.Models
         /// 
         /// </summary>
         public List<ProductAttributes> Data;
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ProductID;
     }
 }

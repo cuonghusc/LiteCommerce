@@ -12,7 +12,7 @@ namespace LiteCommerce.Admin.Controllers
     /// <summary>
     /// 
     /// </summary>
-    [Authorize]
+    [Authorize(Roles = WebUserRoles.Accountant)]
     public class ProductController : Controller
     {
         /// <summary>
@@ -135,6 +135,10 @@ namespace LiteCommerce.Admin.Controllers
         /// <returns></returns>
         public ActionResult Detail(string id = "")
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                return RedirectToAction("Index");
+            }
             try
             {
                 Product model = CatalogBLL.Product_Get(id);
@@ -168,17 +172,14 @@ namespace LiteCommerce.Admin.Controllers
             try
             {
                 Product checkProduct = CatalogBLL.Product_Get(id);
-
-                List<ProductAttributes> data = new List<ProductAttributes>();
-                data = CatalogBLL.Product_GetAttribute(id);
-                if(data == null)
+                if(checkProduct==null)
                 {
-                    ProductAttributes newAttribute = new ProductAttributes();
-                    return View(newAttribute);
+                    return RedirectToAction("Index");
                 }
-                var model = new Models.AttributeResult()
+                var model = new Models.AttributeResult
                 {
-                    Data = data,
+                    Data = CatalogBLL.Product_GetAttribute(id),
+                    ProductID = Convert.ToInt32(id)
                 };
                 return View(model);
             }
@@ -186,6 +187,65 @@ namespace LiteCommerce.Admin.Controllers
             {
                 return RedirectToAction("Index");
             }
+        }
+        [HttpGet]
+        public ActionResult ajaxAttribute(string id = "")
+        {
+            try
+            {
+                Product checkProduct = CatalogBLL.Product_Get(id);
+                if (checkProduct == null)
+                {
+                    return RedirectToAction("Index");
+                }
+                var model = new Models.AttributeResult
+                {
+                    Data = CatalogBLL.Product_GetAttribute(id),
+                };
+                return Json(new { model.Data }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction("Index");
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AttributeName"></param>
+        /// <param name="AttributeValues"></param>
+        /// <param name="DisplayOrder"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Attribute(string[] AttributeName, string[] AttributeValues, string[] DisplayOrder, string ProductID)
+        {
+            //string[] newAttributeName;
+            //string[] newAttributeValues;
+            //string[] newDisplayOrder;
+            List<string> newAttributeName = new List<string>();
+            List<string> newAttributeValues = new List<string>();
+            List<string> newDisplayOrder = new List<string>();
+            for (int i = 0; i < AttributeName.Length; i++)
+            {
+                if(string.IsNullOrEmpty(AttributeName[i]) || string.IsNullOrEmpty(AttributeName[i]))
+                {
+                    continue;
+                }
+                else
+                {
+                    newAttributeName.Add(AttributeName[i]);
+                    newAttributeValues.Add(AttributeValues[i]);
+                    newDisplayOrder.Add(DisplayOrder[i]);
+                }
+            }
+            string[] arrayAttributeName = newAttributeName.ToArray();
+            string[] arrayAttributeValues = newAttributeValues.ToArray();
+            string[] arrayDisplayOrder = newDisplayOrder.ToArray();
+
+            bool rs = CatalogBLL.Product_UpdateAttribute(ProductID, arrayAttributeName, arrayAttributeValues, arrayDisplayOrder);
+
+            return RedirectToAction("Detail", new { id = ProductID });
         }
     }
 }
