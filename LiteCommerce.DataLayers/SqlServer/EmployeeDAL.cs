@@ -176,7 +176,7 @@ namespace LiteCommerce.DataLayers.SqlServer
         /// <param name="pageSize"></param>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public List<Employee> List(int page, int pageSize, string searchValue,string country,int idCookie)
+        public List<Employee> List(int page, int pageSize, string searchValue,string country)
         {
             List<Employee> data = new List<Employee>();
             if (!string.IsNullOrEmpty(searchValue))
@@ -191,8 +191,7 @@ namespace LiteCommerce.DataLayers.SqlServer
                                             SELECT *, ROW_NUMBER() OVER(ORDER BY EmployeeID) AS RowNumber
                                             FROM Employees
                                             WHERE
-                                                (EmployeeID <> @idCookie)
-			                                    AND (
+			                                    (
 				                                    (@searchValue = N'')
 				                                    OR (FirstName like @searchValue)
 				                                    OR (LastName like @searchValue)
@@ -206,7 +205,6 @@ namespace LiteCommerce.DataLayers.SqlServer
                     cmd.CommandType = CommandType.Text;
                     cmd.Connection = connection;
                     
-                    cmd.Parameters.AddWithValue("idCookie",idCookie);
                     cmd.Parameters.AddWithValue("@page", page);
                     cmd.Parameters.AddWithValue("@pageSize", pageSize);
                     cmd.Parameters.AddWithValue("@searchValue", searchValue);
@@ -290,7 +288,7 @@ namespace LiteCommerce.DataLayers.SqlServer
         /// </summary>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        public int Count(string searchValue, string country, int idCookie)
+        public int Count(string searchValue, string country)
         {
             int dem;
             if (!string.IsNullOrEmpty(searchValue))
@@ -302,9 +300,7 @@ namespace LiteCommerce.DataLayers.SqlServer
                 {
                     cmd.CommandText = @"SELECT count(*)
                                         FROM Employees
-                                        WHERE
-                                            (EmployeeID <> @idCookie)
-                                            AND(
+                                        WHERE(
                                                 (@searchValue = N'')
                                                 OR (FirstName like @searchValue)
                                                 OR (LastName like @searchValue)
@@ -315,7 +311,6 @@ namespace LiteCommerce.DataLayers.SqlServer
                                             )";
                     cmd.CommandType = CommandType.Text;
                     cmd.Connection = connection;
-                    cmd.Parameters.AddWithValue("@idCookie", idCookie);
                     cmd.Parameters.AddWithValue("@searchValue", searchValue);
                     cmd.Parameters.AddWithValue("@country", country);
 

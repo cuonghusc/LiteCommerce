@@ -22,17 +22,12 @@ namespace LiteCommerce.Admin.Controllers
         /// <returns></returns>
         public ActionResult Index(int page = 1, string searchValue = "",string country = "")
         {
-            //HttpCookie requestCookie = Request.Cookies["userInfo"];
-            //int idCookie = Convert.ToInt32(requestCookie["AccountID"]);
-
-            WebUserData userData = User.GetUserData();
-            int idCookie = Convert.ToInt32(userData.UserID);
             var model = new Models.EmployeePaginationResult()
             {
                 Page = page,
                 PageSize = AppSettings.DefaultPageSize,
-                RowCount = HumanResourceBLL.Employee_Count(searchValue,country,idCookie),
-                Data = HumanResourceBLL.Employee_List(page, AppSettings.DefaultPageSize, searchValue, country, idCookie),
+                RowCount = HumanResourceBLL.Employee_Count(searchValue,country),
+                Data = HumanResourceBLL.Employee_List(page, AppSettings.DefaultPageSize, searchValue, country),
                 SearchValue = searchValue,
                 Country = country,
             };
@@ -58,8 +53,6 @@ namespace LiteCommerce.Admin.Controllers
             }
             else
             {
-                //HttpCookie requestCookie = Request.Cookies["userInfo"];
-                //string idCookie = requestCookie["AccountID"];
 
                 WebUserData userData = User.GetUserData();
                 string idCookie = userData.UserID;

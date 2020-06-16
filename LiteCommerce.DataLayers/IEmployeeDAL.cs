@@ -40,13 +40,13 @@ namespace LiteCommerce.DataLayers
         /// <param name="pageSize"></param>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        List<Employee> List(int page, int pageSize, string searchValue, string country, int idCookie);
+        List<Employee> List(int page, int pageSize, string searchValue, string country);
         /// <summary>
         /// Đếm số nhân viên
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        int Count(string searchValue, string country, int idCookie);
+        int Count(string searchValue, string country);
         /// <summary>
         /// Check email khi add hoặc update nhân viên
         /// </summary>
