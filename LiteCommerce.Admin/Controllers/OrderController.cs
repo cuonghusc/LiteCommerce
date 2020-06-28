@@ -2,6 +2,7 @@
 using LiteCommerce.DomainModels;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -101,13 +102,13 @@ namespace LiteCommerce.Admin.Controllers
                 {
                     if (model.OrderID == 0)
                     {
-                        ViewBag.Title = "Add New Product";
+                        ViewBag.Title = "Add New Order";
                         ViewBag.ConfirmButton = "Add";
                         return View(model);
                     }
                     else
                     {
-                        ViewBag.Title = "Edit Product";
+                        ViewBag.Title = "Edit Order";
                         ViewBag.ConfirmButton = "Save";
                         return View(model);
 
@@ -148,10 +149,18 @@ namespace LiteCommerce.Admin.Controllers
             {
                 try
                 {
+                    List<OrderDetails> data = OrderBLL.OrderDetail_Get(id);
+                    double dem = 0;
+                    foreach(var item in data)
+                    {
+                        dem += (item.Quantity*item.UnitPrice - item.Quantity*item.UnitPrice*item.Discount);
+                    }
+                    string total = dem.ToString("N1", CultureInfo.InvariantCulture);
                     var model = new Models.OrderDetailsResult
                     {
-                        Data = OrderBLL.OrderDetail_Get(id),
-                        OrderID = id
+                        Data = data,
+                        OrderID = id,
+                        Total = total
                     };
                     return View(model);
                 }
@@ -172,9 +181,17 @@ namespace LiteCommerce.Admin.Controllers
         [HttpPost]
         public ActionResult AddProduct(string orderId,string productId,int quantity = 0,double discount = 0)
         {
-            if (string.IsNullOrEmpty(orderId) || string.IsNullOrEmpty(productId))
+            if (string.IsNullOrEmpty(orderId))
             {
                 return RedirectToAction("Index");
+            }
+            if (string.IsNullOrEmpty(productId) || quantity < 0)
+            {
+                return Redirect("~/Order/OrderDetails/"+ orderId);
+            }
+            if (quantity < 1 || discount < 0 || discount > 100)
+            {
+                return Redirect("~/Order/OrderDetails/" + orderId);
             }
             else
             {
@@ -186,7 +203,16 @@ namespace LiteCommerce.Admin.Controllers
                 orderDetails.Quantity = quantity;
                 orderDetails.Discount = discount;
                 orderDetails.UnitPrice = unitprice;
-                string rs = OrderBLL.Order_Add_Product(orderDetails);
+                bool check = OrderBLL.CheckOrder(orderId, productId);
+                string rs = "";
+                if (check)
+                {
+                    rs = OrderBLL.Order_Update_Product(orderDetails,"add");
+                }
+                else
+                {
+                    rs = OrderBLL.Order_Add_Product(orderDetails);
+                }
                 return Redirect("~/Order/OrderDetails/" + rs);
             }
         }
@@ -201,6 +227,11 @@ namespace LiteCommerce.Admin.Controllers
             bool rs = OrderBLL.Delete_Product(OrderID, ProductID);
             return Redirect("~/Order/OrderDetails/" + OrderID);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Delete(string[] orderId)
         {
@@ -212,6 +243,44 @@ namespace LiteCommerce.Admin.Controllers
             {
                 bool rs = OrderBLL.Delete(orderId);
                 return RedirectToAction("Index");
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="productId"></param>
+        /// <param name="quantity"></param>
+        /// <param name="discount"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult UpdateProduct(string orderId, string productId, int quantity,int discount)
+        {
+            if(string.IsNullOrEmpty(orderId) || string.IsNullOrEmpty(productId))
+            {
+                return RedirectToAction("Index");
+            }
+            if (quantity < 1 || discount < 0 || discount > 100)
+            {
+                return Redirect("~/Order/OrderDetails/" + orderId);
+            }
+            else
+            {
+                OrderDetails order = new OrderDetails();
+                order.OrderID = Convert.ToInt32(orderId);
+                order.ProductID = Convert.ToInt32(productId);
+                order.Quantity = Convert.ToInt32(quantity);
+                order.Discount = Convert.ToInt32(discount);
+
+                try
+                {
+                    string rs = OrderBLL.Order_Update_Product(order,"update");
+                    return Redirect("~/Order/OrderDetails/" + rs);
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("Index");
+                }
             }
         }
     }

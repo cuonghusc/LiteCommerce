@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LiteCommerce.BusinessLayers;
+using LiteCommerce.DomainModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,9 +18,13 @@ namespace LiteCommerce.Admin.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(string day = "")
         {
-            return View();
+            List<TopProduct> data = ReportBLL.TopProduct(day);
+            var model = new Models.ReportTopProduct(){
+                Data = data
+            };
+            return View(model);
         }
     }
 }

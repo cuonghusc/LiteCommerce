@@ -95,5 +95,15 @@ namespace LiteCommerce.BusinessLayers
         {
             return OrderDB.Delete(orderId);
         }
+
+        public static bool CheckOrder(string orderId, string productId)
+        {
+            return OrderDB.CheckOrder(orderId, productId);
+        }
+
+        public static string Order_Update_Product(OrderDetails orderDetails,string method)
+        {
+            return OrderDB.UpdateProduct(orderDetails,method);
+        }
     }
 }

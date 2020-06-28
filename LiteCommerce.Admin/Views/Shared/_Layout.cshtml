@@ -342,7 +342,7 @@
                                 <td>${item.ProductName}</td>
                                 <td>${item.UnitPrice}</td>
                                 <td>${item.Quantity}</td>
-                                <td>${item.Discount*100}%</td>
+                                <td>${Math.round(item.Discount*100)}%</td>
                                 <td>${item.Amount}</td>
                             </tr>`;
                         total += item.Amount;
@@ -387,6 +387,28 @@
                     $('.ShipCountry').text = data.Country;
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).on('click', '#edit_product', function (e) {
+            e.preventDefault();
+            let idOrder = $(this).attr('data-order');
+            let idProduct = $(this).attr('data-product');
+            let quantity = $(this).attr('data-quantity');
+            let discount = $(this).attr('data-discount');
+            let productName = $(this).attr('data-product-name');
+            html = `<td>
+                <input type="hidden" name="productId" class ="form-control" value="${idProduct}" readonly/>
+                        <input type="text" class ="form-control" value="${productName}" readonly/>
+                        </td>
+                        <td>
+                            <input type="number" name="Quantity" class ="form-control" value="${quantity}" min="1" value="1"/>
+                        </td>
+                        <td>
+                            <input type="number" name="Discount" class ="form-control" value="${Math.round(discount*100)}" min="0" max="100" value="0" step="5"/>
+                        </td>`;
+            $('#fetch_product_order').html(html);
+            $('#update_product_modal').modal('show');
         });
     </script>
 </body>

@@ -50,7 +50,7 @@
         <div class="col-sm-4">
             <div class="pull-right">
                 <a href="~/Order/Input" class="btn btn-sm btn-success"><i class="fa fa-plus-circle"></i> Add</a>
-                <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i> Delete</button>
+                @*<button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i> Delete</button>*@
             </div>
         </div>
     </div>
@@ -61,7 +61,7 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="selectAll" /></th>
+                        @*<th><input type="checkbox" id="selectAll" /></th>*@
                         <th>#</th>
                         <th>CustomerName</th>
                         <th>Order Infor</th>
@@ -74,9 +74,9 @@
                     @foreach (var item in Model.Data)
                     {
                         <tr>
-                            <td>
+                            @*<td>
                                 <input type="checkbox" value="@item.OrderID"/>
-                            </td>
+                            </td>*@
                             <td>@((Model.Page - 1) * Model.PageSize + (++i))</td>
                             <td>- @item.CustomerName</td>
                             <td>
@@ -94,11 +94,11 @@
                             <td>
                                 <p>- Product Cost : @item.PriceProduct</p>
                                 <p>- Transport Fee : @item.Freight</p>
-                                <p>- Total : <span class="label label-danger">@item.PaymentTotal</span></p>
+                                <p>- Total : <span class="label label-danger">@item.PaymentTotal.ToString("N1", System.Globalization.CultureInfo.InvariantCulture)</span></p>
                             </td>
                             <td width="130px">
                                 <button id="order_detail" data-order="@item.OrderID" class="btn btn-sm btn-success" data-toggle="tooltip" title="View Detail"><i class="fa fa-eye"></i></button>
-                                <a href="~/Order/Input/@item.OrderID" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></a>
+                                <a href="~/Order/Input/@item.OrderID" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Edit Info"><i class="fa fa-pencil"></i></a>
                                 <a href="~/Order/OrderDetails/@item.OrderID" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Product"><i class="fa fa-bookmark"></i></a>
                             </td>
                         </tr>
@@ -151,7 +151,7 @@
                         <li><a href="~/Order?page=@Model.PageCount&searchValue=@Model.SearchValue&CustomerID=@Model.CustomerID&Country=@Model.Country&ShipperID=@Model.ShipperID">Last</a></li>
                     }
                 }
-            </ul>
+            </ul>           
         </div>
     </div>
 </form>

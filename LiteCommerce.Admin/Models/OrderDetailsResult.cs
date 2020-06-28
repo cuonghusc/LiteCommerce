@@ -16,5 +16,9 @@ namespace LiteCommerce.Admin.Models
         /// 
         /// </summary>
         public string OrderID;
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Total;
     }
 }

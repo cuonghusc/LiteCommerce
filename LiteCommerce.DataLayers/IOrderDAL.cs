@@ -56,7 +56,26 @@ namespace LiteCommerce.DataLayers
         /// <param name="id"></param>
         /// <returns></returns>
         Order Get(string id);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         string Add_Product(OrderDetails model);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <param name="productID"></param>
+        /// <returns></returns>
         bool Delete_Product(string orderID, string productID);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        bool CheckOrder(string orderId, string productId);
+        string UpdateProduct(OrderDetails orderDetails,string method);
     }
 }

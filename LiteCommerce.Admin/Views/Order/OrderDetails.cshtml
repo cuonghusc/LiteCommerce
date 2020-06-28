@@ -19,6 +19,7 @@
                 <thead>
                     <tr>
                         <th>Product</th>
+                        <th>UnitPrice</th>
                         <th>Quantity</th>
                         <th>Discount</th>
                         <th>Amount</th>
@@ -27,11 +28,12 @@
                 </thead>
                 <tbody>
                     @foreach (var item in Model.Data)
-                    {
+                    {                        
                         <tr>
                             <td>
                                 @item.ProductName
                             </td>
+                            <td>@item.UnitPrice</td>
                             <td>@item.Quantity</td>
                             <td>@(Math.Round(item.Discount * 100))%</td>
                             <td>@(Math.Round((item.Quantity*item.UnitPrice - item.Quantity*item.UnitPrice*item.Discount),1))</td>
@@ -42,12 +44,20 @@
                                     <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
                                 </form>*@  
                                 <a href="~/Order/DeleteProduct?OrderID=@Model.OrderID&ProductID=@item.ProductID"  class="btn btn-sm btn-danger" ><i class="fa fa-trash"></i></a>                       
+                                <button id="edit_product" data-product-name="@item.ProductName" data-discount="@item.Discount" data-quantity="@item.Quantity" data-product="@item.ProductID" data-order="@Model.OrderID" class="btn btn-sm btn-primary"><i class="fa fa-pencil"></i></button>
                             </td>
                         </tr>
                     }
                     
                 </tbody>
-
+                <tfoot>
+                    <tr>
+                        <td colspan="6" class="text-right">
+                            <p>Total Payment <i>(*Transportation fee isn't charged)</i> </p>
+                            <h1 class="text-danger">@Model.Total</h1>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
             <!-- /.box-body -->
             @*<div class="box-footer">
@@ -99,15 +109,57 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <input type="number" name="Quantity" class="form-control"/>
+                                        <input type="number" name="Quantity" class="form-control" min="1" value="1"/>
                                     </td>
                                     <td>
-                                        <input type="number" name="Discount" class="form-control"/>
+                                        <input type="number" name="Discount" class="form-control" min="1" max="100" value="0" step="5"/>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="update_product_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#3c8dbc;color:white;">
+                <h4 class="modal-title" id="exampleModalLabel">Edit Product Order Details</h4>
+            </div>
+            <div class="modal-body">
+                <div id="order_data">
+                    <form action="~/Order/UpdateProduct" method="post">
+                        <input type="hidden" name="orderId" value="@Model.OrderID" />
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        ProductName
+                                    </th>
+                                    <th>
+                                        Quantity
+                                    </th>
+                                    <th>
+                                        Discount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="fetch_product_order">
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+
                 </div>
             </div>
             <div class="modal-footer">

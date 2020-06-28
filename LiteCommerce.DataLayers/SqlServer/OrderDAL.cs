@@ -210,7 +210,7 @@ namespace LiteCommerce.DataLayers.SqlServer
 		                WHERE ((@searchValue = N'') OR (c.CompanyName like @searchValue))
                         AND ((@CustomerID = N'') OR (@CustomerID = c.CustomerID))
                         AND ((@ShipperID = N'') OR (@ShipperID = b.ShipperID))
-                        AND ((@Country = N'') OR (@Country = c.Country))
+                        AND ((@Country = N'') OR (@Country = a.ShipCountry))
 	                ) AS k 
 	                    WHERE k.RowNumber BETWEEN (@page - 1) * @pageSize + 1 AND @page * @pageSize
                     ORDER BY k.RowNumber";
@@ -321,7 +321,7 @@ namespace LiteCommerce.DataLayers.SqlServer
                                         WHERE ((@searchValue = N'') OR (b.CompanyName like @searchValue))
                                             AND ((@CustomerID = N'') OR (@CustomerID = b.CustomerID))
                                             AND ((@ShipperID = N'') OR (@ShipperID = c.ShipperID))
-                                            AND ((@Country = N'') OR (@Country = b.Country))";
+                                            AND ((@Country = N'') OR (@Country = a.ShipCountry))";
                     cmd.CommandType = CommandType.Text;
                     cmd.Connection = connection;
                     cmd.Parameters.AddWithValue("@searchValue", searchValue);
@@ -334,6 +334,11 @@ namespace LiteCommerce.DataLayers.SqlServer
             }
             return dem;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
         public Order Get(string orderID)
         {
             Order data = null;
@@ -371,6 +376,11 @@ namespace LiteCommerce.DataLayers.SqlServer
             return data;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public string Add_Product(OrderDetails model)
         {
             using (SqlConnection connection = new SqlConnection(this.connectionString))
@@ -406,7 +416,12 @@ namespace LiteCommerce.DataLayers.SqlServer
             }
             return Convert.ToString(model.OrderID);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <param name="productID"></param>
+        /// <returns></returns>
         public bool Delete_Product(string orderID, string productID)
         {
             int result = 0;
@@ -426,6 +441,77 @@ namespace LiteCommerce.DataLayers.SqlServer
                 connection.Close();
             }
             return result > 0;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <param name="productID"></param>
+        /// <returns></returns>
+        public bool CheckOrder(string orderID,string productID)
+        {
+            OrderDetails data = null;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"SELECT * FROM OrderDetails WHERE OrderID = @orderID AND ProductID = @productID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("@orderID", orderID);
+                cmd.Parameters.AddWithValue("@productID", productID);
+                using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                {
+                    if (dbReader.Read())
+                    {
+                        data = new OrderDetails()
+                        {
+                            OrderID = Convert.ToInt32(dbReader["OrderID"]),
+                            ProductID = Convert.ToInt32(dbReader["ProductID"])
+                        };
+                    }
+                }
+                connection.Close();
+            }
+            return (data!=null);
+        }
+
+        public string UpdateProduct(OrderDetails orderDetails, string method ="add")
+        {
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
+            {
+                connection.Open();
+
+                SqlCommand cmd = new SqlCommand();
+                if (method == "add")
+                {
+                    cmd.CommandText = @"UPDATE OrderDetails
+                                           SET UnitPrice = @UnitPrice 
+                                              ,Quantity = Quantity + @Quantity
+                                                ,Discount = @Discount
+                                          WHERE OrderID = @OrderID AND ProductID = @ProductID";
+                }else
+                {
+                    cmd.CommandText = @"UPDATE OrderDetails
+                                           SET  Quantity = @Quantity
+                                                ,Discount = @Discount
+                                          WHERE OrderID = @OrderID AND ProductID = @ProductID";
+                }
+                
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("@UnitPrice", orderDetails.UnitPrice);
+                cmd.Parameters.AddWithValue("@Quantity", orderDetails.Quantity);
+                cmd.Parameters.AddWithValue("@Discount", orderDetails.Discount/100);
+                cmd.Parameters.AddWithValue("@OrderID", orderDetails.OrderID);
+                cmd.Parameters.AddWithValue("@ProductID", orderDetails.ProductID);
+                cmd.ExecuteNonQuery();
+
+                connection.Close();
+            }
+
+            return Convert.ToString(orderDetails.OrderID);
         }
     }
 }

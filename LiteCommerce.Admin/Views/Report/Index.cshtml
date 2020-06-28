@@ -1,7 +1,54 @@
-﻿
+﻿@model LiteCommerce.Admin.Models.ReportTopProduct
 @{
     ViewBag.Title = "Reports";
+    int i = 0;
 }
 
-<h2>Index</h2>
+<div class="box box-success">
+    <div class="box-header with-border">
+        <h3 class="box-title">Top <select name="quantity"></select> trending products</h3>
+
+        <div class="box-tools pull-right">
+            <select class="form-control" name="Day">
+                <option>-- All times --</option>
+                <option value="7">7 days ago</option>
+                <option value="30">30 days ago</option>
+            </select>
+        </div>
+    </div>
+    <div class="box-body">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        Product
+                    </th>
+                    <th>
+                        Quantity
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Data)
+                {
+                    <tr>
+                        <td>
+                            @(++i)
+                        </td>
+                        <td>
+                            @item.ProductName
+                        </td>
+                        <td>
+                            @item.Quantity
+                        </td>
+                    </tr>
+                }
+                
+            </tbody>
+        </table>
+    </div>
+</div>
 

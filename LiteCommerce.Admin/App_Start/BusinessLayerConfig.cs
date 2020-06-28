@@ -23,6 +23,7 @@ namespace LiteCommerce.Admin
             AccountBLL.Initialize(connectionString);
             UserAccountBLL.Initialize(connectionString);
             OrderBLL.Initialize(connectionString);
+            ReportBLL.Initialize(connectionString);
             //TODO: Bổ sung khởi tạo các BLL khác khi cần sử dụng :3
         }
     }
