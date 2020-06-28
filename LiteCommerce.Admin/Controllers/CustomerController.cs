@@ -153,5 +153,11 @@ namespace LiteCommerce.Admin.Controllers
                 CatalogBLL.Customer_Delete(customerIDs);
             return RedirectToAction("Index");
         }
+        [HttpPost]
+        public ActionResult ajaxGet(string id = "")
+        {
+            var data =  CatalogBLL.Customer_Get(id);
+            return Json(data);
+        }
     }
 }

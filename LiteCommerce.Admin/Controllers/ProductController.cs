@@ -245,7 +245,14 @@ namespace LiteCommerce.Admin.Controllers
 
             bool rs = CatalogBLL.Product_UpdateAttribute(ProductID, arrayAttributeName, arrayAttributeValues, arrayDisplayOrder);
 
-            return RedirectToAction("Detail", new { id = ProductID });
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public ActionResult ajaxProductDetail(string id)
+        {
+            var product = CatalogBLL.Product_Get(id);
+            product.ProductAttributes = CatalogBLL.Product_GetAttribute(id);
+            return Json(product);
         }
     }
 }

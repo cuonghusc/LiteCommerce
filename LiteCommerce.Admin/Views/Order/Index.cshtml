@@ -1,6 +1,203 @@
-﻿
+﻿@model LiteCommerce.Admin.Models.OrderPaginationResult
 @{
     ViewBag.Title = "Orders List";
+    int i = 0;
 }
 
+<!-- Search box -->
+<div class="box box-primary">
+    <!-- form start -->
+    <form action="~/Order" method="get" role="form">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.DropDownListFor(m => m.CustomerID, SelectListHelper.ListOfCustomer(),
+                            new { @class = "form-control", @id = "selectSupplier" })
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.DropDownListFor(m => m.Country, SelectListHelper.ListOfCountries(),
+                            new { @class = "form-control", @id = "selectCountry" })
+                    </div> 
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        @Html.DropDownListFor(m => m.ShipperID, SelectListHelper.ListOfShipper(),
+                            new { @class = "form-control", @id = "selectShipper" })
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Input search value" name="searchValue" value="@Model.SearchValue">
+                        <span class="input-group-btn">
+                            <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </form>
+</div>
+<!-- /.box -->
+<form action="~/Order/Delete" method="post">
+    <div class="row">
+        <div class="col-sm-8">
+            <span>There are <b>@Model.RowCount</b> Orders. Page <b>@Model.Page/@Model.PageCount</b></span>
+        </div>
+        <div class="col-sm-4">
+            <div class="pull-right">
+                <a href="~/Order/Input" class="btn btn-sm btn-success"><i class="fa fa-plus-circle"></i> Add</a>
+                <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i> Delete</button>
+            </div>
+        </div>
+    </div>
+    <br />
+    <!-- Table box -->
+    <div class="box box-success">
+        <div class="box-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll" /></th>
+                        <th>#</th>
+                        <th>CustomerName</th>
+                        <th>Order Infor</th>
+                        <th>Shipping Infor</th>
+                        <th>Payment Details</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" value="@item.OrderID"/>
+                            </td>
+                            <td>@((Model.Page - 1) * Model.PageSize + (++i))</td>
+                            <td>- @item.CustomerName</td>
+                            <td>
+                                <p>- OrderDate : @string.Format("{0:dd/MM/yyyy}", item.OrderDate)</p>
+                                <p>- RequiredDate : @string.Format("{0:dd/MM/yyyy}", item.RequiredDate)</p>
+                            </td>
 
+                            <td>
+                                <p>- ShippedDate : @string.Format("{0:dd/MM/yyyy}", item.ShippedDate)</p>
+                                <p>- ShipperName : @item.ShipperName</p>
+                                <p>- ShipAddress : @item.ShipAddress</p>
+                                <p>- ShipCity : @item.ShipCity</p>
+                                <p>- ShipCountry : @item.ShipCountry</p>
+                            </td>
+                            <td>
+                                <p>- Product Cost : @item.PriceProduct</p>
+                                <p>- Transport Fee : @item.Freight</p>
+                                <p>- Total : <span class="label label-danger">@item.PaymentTotal</span></p>
+                            </td>
+                            <td width="130px">
+                                <button id="order_detail" data-order="@item.OrderID" class="btn btn-sm btn-success" data-toggle="tooltip" title="View Detail"><i class="fa fa-eye"></i></button>
+                                <a href="~/Order/Input/@item.OrderID" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></a>
+                                <a href="~/Order/OrderDetails/@item.OrderID" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Product"><i class="fa fa-bookmark"></i></a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <div class="box-footer clearfix">
+            <ul class="pagination pagination-sm no-margin pull-right">
+                @if (Model.PageCount > 0)
+                {
+                    if (Model.Page != 1)
+                    {
+                        <li><a href="~/Order?page=1&searchValue=@Model.SearchValue&CustomerID=@Model.CustomerID&Country=@Model.Country&ShipperID=@Model.ShipperID">First</a></li>
+                        <li>
+                            <a href="~/Order?page=@(Model.Page - 1)&searchValue=@Model.SearchValue&CustomerID=@Model.CustomerID&Country=@Model.Country&ShipperID=@Model.ShipperID"><span><i class="fa fa-angle-double-left"></i></span></a>
+                        </li>
+                    }
+                    for (int page = 1; page <= Model.PageCount; page++)
+                    {
+                        if (Model.Page == page)
+                        {
+                            <li class="active"><a href="~/Order?page=@page&searchValue=@Model.SearchValue&CustomerID=@Model.CustomerID&Country=@Model.Country&ShipperID=@Model.ShipperID">@page</a></li>
+                        }
+                        else if (page == (Model.Page + 1) || page == (Model.Page + 2) || page == Model.PageCount)
+                        {
+                            <li><a href="~/Order?page=@page&searchValue=@Model.SearchValue&CustomerID=@Model.CustomerID&Country=@Model.Country&ShipperID=@Model.ShipperID">@page</a></li>
+                        }
+                        else if (page == (Model.Page - 1) || page == (Model.Page - 2))
+                        {
+                            <li><a href="~/Order?page=@page&searchValue=@Model.SearchValue&CustomerID=@Model.CustomerID&Country=@Model.Country&ShipperID=@Model.ShipperID">@page</a></li>
+                        }
+                        else if (page == (Model.PageCount - 1))
+                        {
+                            <li class="disabled"><span><i class="fa fa-ellipsis-h"></i></span></li>
+                        }
+                    }
+                    if (Model.Page < Model.PageCount)
+                    {
+                        <li>
+                            <a href="~/Order?page=@(Model.Page + 1)&searchValue=@Model.SearchValue&CustomerID=@Model.CustomerID&Country=@Model.Country&ShipperID=@Model.ShipperID">
+                                <span><i class="fa fa-angle-double-right"></i></span>
+                            </a>
+                        </li>
+                    }
+
+                    if (Model.Page != Model.PageCount)
+                    {
+                        <li><a href="~/Order?page=@Model.PageCount&searchValue=@Model.SearchValue&CustomerID=@Model.CustomerID&Country=@Model.Country&ShipperID=@Model.ShipperID">Last</a></li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</form>
+
+<!-- /.box-body -->
+<div class="modal fade" id="show_order_detail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#3c8dbc;color:white;">
+                <h4 class="modal-title" id="exampleModalLabel">Order Details</h4>
+            </div>
+            <div class="modal-body">
+                <div id="order_data">
+                    <!-- Đổ dữ liệu chi tiết hóa đơn vào đây -->
+                    @*<table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th>UnitPrice</th>
+                                <th>Quantity</th>
+                                <th>Discount</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>*@
+                            @*<tr>
+                                <td>1</td>
+                                <td>Sản phẩm 1</td>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>10%</td>
+                                <td>90</td>
+                            </tr>*@
+                        @*</tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="6" class="text-right">Total payment: <h1 class="text-danger">90</h1></td>
+                            </tr>
+                        </tfoot>
+                    </table>*@
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

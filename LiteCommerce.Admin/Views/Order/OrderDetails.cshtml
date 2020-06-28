@@ -1,0 +1,120 @@
+﻿@model LiteCommerce.Admin.Models.OrderDetailsResult
+@{ 
+    ViewBag.Title = "Order Details";
+    int dem = 0;
+}
+<div class="box box-primary">
+    <!-- form start -->
+    <form role="form" action="~/Order/OrderDetail" method="post">
+        <div class="box-header with-border">
+            <div class="box-tools pull-right">
+                <a href="~/Order" class="btn btn-primary">
+                    <i class="fa fa-long-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+        <input type="hidden" name="OrderID" value="@Model.OrderID" />
+        <div class="box-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Discount</th>
+                        <th>Amount</th>
+                        <th><button id="add_product" class="btn btn-sm btn-success"><i class="fa fa-plus-circle"></i> Add Product</button></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Data)
+                    {
+                        <tr>
+                            <td>
+                                @item.ProductName
+                            </td>
+                            <td>@item.Quantity</td>
+                            <td>@(Math.Round(item.Discount * 100))%</td>
+                            <td>@(Math.Round((item.Quantity*item.UnitPrice - item.Quantity*item.UnitPrice*item.Discount),1))</td>
+                            <td>
+                                @*<form action="~/Order/DeleteProduct" method="post" >
+                                    <input type="hidden" name="OrderID" value="@Model.OrderID" />
+                                    <input type="hidden" name="ProductID" value="@item.ProductID" />
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                </form>*@  
+                                <a href="~/Order/DeleteProduct?OrderID=@Model.OrderID&ProductID=@item.ProductID"  class="btn btn-sm btn-danger" ><i class="fa fa-trash"></i></a>                       
+                            </td>
+                        </tr>
+                    }
+                    
+                </tbody>
+
+            </table>
+            <!-- /.box-body -->
+            @*<div class="box-footer">
+                <button type="submit" id="ButtonSubmit" class="btn btn-primary btn-sm">
+                    <i class="fa fa-check"></i> Save
+                </button>
+                <a href="~/Order" class="btn btn-default btn-sm">
+                    <i class="fa fa-times"></i> Cancel
+                </a>
+            </div>*@
+        </div>
+    </form>
+</div>
+
+
+<!-- /.box-body -->
+<div class="modal fade" id="add_product_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#3c8dbc;color:white;">
+                <h4 class="modal-title" id="exampleModalLabel">Add Product</h4>
+            </div>
+            <div class="modal-body">
+                <div id="order_data">
+                    <form action="~/Order/AddProduct" method="post">
+                        <input type="hidden" name="orderId" value="@Model.OrderID" />
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        ProductName
+                                    </th>
+                                    <th>
+                                        Quantity
+                                    </th>
+                                    <th>
+                                        Discount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select class="form-control" name="productId">
+                                            @foreach(var item in SelectListHelper.ListOfProduct())
+                                            {
+                                                <option value="@item.Value">@item.Text</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="Quantity" class="form-control"/>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="Discount" class="form-control"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

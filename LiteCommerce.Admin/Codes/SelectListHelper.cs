@@ -59,5 +59,54 @@ namespace LiteCommerce.Admin
             }
             return listSupplier;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="allowSelectAll"></param>
+        /// <returns></returns>
+        public static List<SelectListItem> ListOfCustomer(bool allowSelectAll = true)
+        {
+            List<SelectListItem> listCustomer = new List<SelectListItem>();
+            if (allowSelectAll)
+            {
+                listCustomer.Add(new SelectListItem() { Value = "", Text = "--- All Customer ---" });
+            }
+            foreach (var item in CatalogBLL.Customer_ListNoPagination())
+            {
+                listCustomer.Add(new SelectListItem() { Value = Convert.ToString(item.CustomerID), Text = item.CompanyName });
+            }
+            return listCustomer;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="allowSelectAll"></param>
+        /// <returns></returns>
+        public static List<SelectListItem> ListOfShipper(bool allowSelectAll = true)
+        {
+            List<SelectListItem> listShipper = new List<SelectListItem>();
+            if (allowSelectAll)
+            {
+                listShipper.Add(new SelectListItem() { Value = "", Text = "--- All Shipper ---" });
+            }
+            foreach (var item in CatalogBLL.Shipper_List(""))
+            {
+                listShipper.Add(new SelectListItem() { Value = Convert.ToString(item.ShipperID), Text = item.CompanyName });
+            }
+            return listShipper;
+        }
+        public static List<SelectListItem> ListOfProduct(bool allowSelectAll = true)
+        {
+            List<SelectListItem> listProduct = new List<SelectListItem>();
+            if (allowSelectAll)
+            {
+                listProduct.Add(new SelectListItem() { Value = "", Text = "--- All Products ---" });
+            }
+            foreach (var item in CatalogBLL.Product_GetAll())
+            {
+                listProduct.Add(new SelectListItem() { Value = Convert.ToString(item.ProductID), Text = item.ProductName });
+            }
+            return listProduct;
+        }
     }
 }

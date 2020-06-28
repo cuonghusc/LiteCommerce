@@ -111,6 +111,9 @@
             $("#selectSupplier").select2();
             $("#selectCategory").select2();
             $("#selectCountry").select2();
+            $("#selectProduct").select2();
+            $("#selectShipper").select2();
+            $('#selectCustomer').select2();
         });
     </script>
     <script>
@@ -183,7 +186,6 @@
     </script>
     <script>
         let id = document.getElementById("idProduct").value;
-        fetchAttribute(id);
         function fetchAttribute(id) {
             let method = 'GET';
             $.ajax({
@@ -210,6 +212,182 @@
                 }
             });
         }
+    </script>
+    <script>
+        $(document).on('click', '#product_detail', function (e) {
+            e.preventDefault();
+            let id = $(this).attr("data-product");            
+            
+            $.ajax({               
+                url: '/Product/ajaxProductDetail',
+                method: 'POST',
+                data: { id: id },
+                success: function (data) {
+                    let photoPath = (data.PhotoPath == null || data.PhotoPath == '') ? '/Images/no-image.png' : data.PhotoPath;
+                    let html = `<div class="row">
+                    <div class ="col-md-4"><img src="${photoPath}" width="100%"/></div>
+                    <div class="col-sm-8">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">Product Detail Information</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Product Name
+                                    </td>
+                                    <td>
+                                        ${data.ProductName}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Supplier Name
+                                    </td>
+                                    <td>
+                                        ${data.CompanyName}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Category Name
+                                    </td>
+                                    <td>
+                                        ${data.CategoryName}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Quantity Per Unit
+                                    </td>
+                                    <td>
+                                        ${data.QuantityPerUnit}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        PriceUnit
+                                    </td>
+                                    <td>
+                                        ${data.UnitPrice}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Descriptions
+                                    </td>
+                                    <td>
+                                        <textarea readonly rows="8" cols="55">${data.Descriptions}</textarea>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">Product Attributes</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                    data.ProductAttributes.forEach(function (item) {
+                        html += `<tr>
+                                    <td>
+                                        ${item.AttributeName}
+                                    </td>
+                                    <td>
+                                        ${item.AttributeValues}
+                                    </td>
+                                </tr>`;
+                        });
+                    html+=`
+                            </tbody>
+                        </table>
+                    </div>
+                </div>`;
+                    $('#product_data').html(html);
+                    console.log(data);
+                }
+            });
+            $('#show_product_detail').modal('show');
+        });
+    </script>
+    <script>
+        $(document).on('click', '#order_detail', function (e) {
+            e.preventDefault();
+            let id = $(this).attr("data-order");
+            $.ajax({
+                url: '/Order/ajaxOrderDetail',
+                method: 'POST',
+                data: { id: id },
+                success: function (data) {                    
+                    let html = `<table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Product</th>
+                                <th>UnitPrice</th>
+                                <th>Quantity</th>
+                                <th>Discount</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                    let i = 0;
+                    let total = 0;
+                    data.forEach(function (item) {
+                        html += `<tr>
+                                <td>${++i}</td>
+                                <td>${item.ProductName}</td>
+                                <td>${item.UnitPrice}</td>
+                                <td>${item.Quantity}</td>
+                                <td>${item.Discount*100}%</td>
+                                <td>${item.Amount}</td>
+                            </tr>`;
+                        total += item.Amount;
+                    });
+                    totalPayment = Math.round((total+data[0].Freight)*100)/100;
+                    html += `</tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5"><i>*Transport Fee</i></td>
+                                <td class ="text-danger">${data[0].Freight}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" class ="text-right">Total payment: <h1 class ="text-danger">${totalPayment}</h1></td>
+                            </tr>
+                        </tfoot>
+                    </table>`;
+                    $('#order_data').html(html);
+                    console.log(data);
+                }
+            });
+            $('#show_order_detail').modal('show');
+        });
+    </script>
+    <script>
+        $(document).on('click', '#add_product', function (e) {
+            e.preventDefault();
+            $('#add_product_modal').modal('show');
+        });
+    </script>
+    <script>
+        $(document).on('change', '.fetch_customer', function () {
+            let customer = $(this).val();
+            $.ajax({
+                url: '/Customer/ajaxGet',
+                method: 'POST',
+                data : {id:customer},
+                success: function (data) {
+                    //console.log(data.Address);
+                    $('#ShipAddress').val(data.Address);
+                    $('#ShipCity').val(data.City);
+                    $('#ShipCountry').val(data.Country);
+                    $('.ShipCountry').text = data.Country;
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -117,9 +117,11 @@
                         </td>
                         <td><span>@item.QuantityPerUnit</span></td>
                         <td><span>@item.UnitPrice</span></td>
-                        <td>
-                            <a href="~/Product/Detail/@item.ProductID" class="btn btn-sm btn-success" data-toggle="tooltip" title="View"><i class="fa fa-eye"></i></a>
+                        <td width="150px">
+                            @*<a href="~/Product/Detail/@item.ProductID" class="btn btn-sm btn-success" data-toggle="tooltip" title="View"><i class="fa fa-eye"></i></a>*@
+                            <button class="btn btn-sm btn-success" id="product_detail" title="View" data-toggle="tooltip" data-target="#show_product_detail" data-product="@item.ProductID"><i class="fa fa-eye"></i></button>
                             <a href="~/Product/Input/@item.ProductID" class="btn btn-sm btn-primary" data-toggle="tooltip" title="Edit"><i class="fa fa-pencil"></i></a>
+                            <a href="~/Product/Attribute/@item.ProductID" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit Attribute"><i class="fa fa-tags"></i></a>
                         </td>
                     </tr>
                 }
@@ -127,46 +129,68 @@
         </table>
     </div>
  </form>
+@*Chi tiết sản phẩm*@
+<div class="modal fade" id="show_product_detail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#3c8dbc;color:white;">
+                <h4 class="modal-title" id="exampleModalLabel">Product Details</h4>
+            </div>
+            <div class="modal-body">
+                <div id="product_data">
+                    <!-- Đổ dữ liệu chi tiết sản phẩm vào đây -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*Chi tiết sản phẩm*@
     <div class="box-footer clearfix">
         <ul class="pagination pagination-sm no-margin pull-right">
-            @if (Model.Page != 1)
+            @if (Model.PageCount > 0)
             {
-                <li><a href="~/Product?page=1&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">First</a></li>
-                <li>
-                    <a href="~/Product?page=@(Model.Page-1)&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID"><span><i class="fa fa-angle-double-left"></i></span></a>
-                </li>
-            }
-            @for (int page = 1; page <= Model.PageCount; page++)
-            {
-                if(Model.Page == page)
+                if (Model.Page != 1)
                 {
-                    <li class="active"><a href="~/Product?page=@page&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">@page</a></li>
+                    <li><a href="~/Product?page=1&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">First</a></li>
+                    <li>
+                        <a href="~/Product?page=@(Model.Page - 1)&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID"><span><i class="fa fa-angle-double-left"></i></span></a>
+                    </li>
                 }
-                else if (page == (Model.Page + 1) || page == (Model.Page + 2) || page == Model.PageCount)
+                for (int page = 1; page <= Model.PageCount; page++)
                 {
-                    <li><a href="~/Product?page=@page&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">@page</a></li>
+                    if (Model.Page == page)
+                    {
+                        <li class="active"><a href="~/Product?page=@page&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">@page</a></li>
+                    }
+                    else if (page == (Model.Page + 1) || page == (Model.Page + 2) || page == Model.PageCount)
+                    {
+                        <li><a href="~/Product?page=@page&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">@page</a></li>
+                    }
+                    else if (page == (Model.Page - 1) || page == (Model.Page - 2))
+                    {
+                        <li><a href="~/Product?page=@page&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">@page</a></li>
+                    }
+                    else if (page == (Model.PageCount - 1))
+                    {
+                        <li class="disabled"><span><i class="fa fa-ellipsis-h"></i></span></li>
+                    }
                 }
-                else if (page == (Model.Page - 1) || page == (Model.Page - 2))
+                if (Model.Page < Model.PageCount)
                 {
-                    <li><a href="~/Product?page=@page&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">@page</a></li>
+                    <li>
+                        <a href="~/Product?page=@(Model.Page + 1)&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">
+                            <span><i class="fa fa-angle-double-right"></i></span>
+                        </a>
+                    </li>
                 }
-                else if (page == (Model.PageCount - 1))
-                {
-                    <li class="disabled"><span><i class="fa fa-ellipsis-h"></i></span></li>
-                }
-            }
-            @if (Model.Page < Model.PageCount)
-            {
-                <li>
-                    <a href="~/Product?page=@(Model.Page+1)&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">
-                        <span><i class="fa fa-angle-double-right"></i></span>
-                    </a>
-                </li>
-            }
 
-            @if (Model.Page != Model.PageCount)
-            {
-                <li><a href="~/Product?page=@Model.PageCount&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID">Last</a></li>
+                if (Model.Page != Model.PageCount)
+                {
+                    <li><a href="~/Product?page=@Model.PageCount&searchValue=@Model.SearchValue&categoryId=@Model.CategoryID&supplierId=@Model.SupplierID">Last</a></li>
+                }
             }
         </ul>
     </div>

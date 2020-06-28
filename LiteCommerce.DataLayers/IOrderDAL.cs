@@ -35,7 +35,7 @@ namespace LiteCommerce.DataLayers
         /// </summary>
         /// <param name="OrderID"></param>
         /// <returns></returns>
-        Order Get(string orderID);
+        List<OrderDetails> GetDetail(string orderID);
         /// <summary>
         /// Danh sách kết quả tìm kiếm có phân trang
         /// </summary>
@@ -43,6 +43,20 @@ namespace LiteCommerce.DataLayers
         /// <param name="pageSize"></param>
         /// <param name="searchValue"></param>
         /// <returns></returns>
-        List<Order> List(int page, int pageSize, string searchValue);
+        List<Order> List(int page, int pageSize, string searchValue,string shipperId, string customerId, string country);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="searchValue"></param>
+        /// <returns></returns>
+        int Count(string searchValue, string shipperId, string customerId, string country);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Order Get(string id);
+        string Add_Product(OrderDetails model);
+        bool Delete_Product(string orderID, string productID);
     }
 }

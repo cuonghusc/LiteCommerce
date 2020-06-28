@@ -1,0 +1,109 @@
+﻿@model LiteCommerce.DomainModels.Order
+<div class="box box-primary">
+    <!-- form start -->
+    <form role="form" action="~/Order/Input" method="post">
+        <div class="box-header with-border">
+            <div class="box-tools pull-right">
+                <a href="~/Order" class="btn btn-primary">
+                    <i class="fa fa-long-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+        <input type="hidden" name="OrderID" value="@Model.OrderID" />
+        <div class="box-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Customer:</label>
+                        @Html.DropDownListFor(m => m.CustomerID, SelectListHelper.ListOfCustomer(),
+                            new { @class = "form-control fetch_customer", @id = "selectCustomer" })
+                        @Html.ValidationMessage("CustomerID", new { @style = "color: red" })
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Shipper:</label>
+                        @Html.DropDownListFor(m => m.ShipperID, SelectListHelper.ListOfShipper(),
+                            new { @class = "form-control", @id = "selectShipper" })
+                        @Html.ValidationMessage("ShipperID", new { @style = "color: red" })
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="inputTitle" class="control-label">OrderDate:</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" name="OrderDate" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="" value="@string.Format("{0:dd/MM/yyyy}", Model.OrderDate)">
+                        </div>
+                        @Html.ValidationMessage("OrderDate", new { @style = "color: red" })
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="inputTitle" class="control-label">RequiredDate:</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" name="RequiredDate" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="" value="@string.Format("{0:dd/MM/yyyy}", Model.RequiredDate)">
+                        </div>
+                        @Html.ValidationMessage("RequiredDate", new { @style = "color: red" })
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="inputTitle" class="control-label">ShippedDate:</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <input type="text" name="ShippedDate" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="" value="@string.Format("{0:dd/MM/yyyy}", Model.ShippedDate)">
+                        </div>
+                        @Html.ValidationMessage("ShippedDate", new { @style = "color: red" })
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Freight:</label>
+                        <input type="number" name="Freight" class="form-control" placeholder="Address" min="0" max="100" step="0.01" value="@Model.Freight" />
+                        @Html.ValidationMessage("Freight", new { @style = "color: red" })
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label>Address:</label>
+                        <input type="text" name="ShipAddress" class="form-control" id="ShipAddress" placeholder="Address" value="@Model.ShipAddress" />
+                        @Html.ValidationMessage("ShipAddress", new { @style = "color: red" })
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>City:</label>
+                        <input type="text" name="ShipCity" class="form-control" id="ShipCity" placeholder="City" value="@Model.ShipCity"/>
+                        @Html.ValidationMessage("ShipCity", new { @style = "color: red" })
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Country:</label>
+                        @Html.DropDownListFor(m => m.ShipCountry, SelectListHelper.ListOfCountries(),
+                            new { @class = "form-control ShipCountry", @id = "selectCountry" })
+                        @Html.ValidationMessage("ShipCountry", new { @style = "color: red" })
+                    </div>
+                </div>                
+            </div>
+            @*@Html.ValidationSummary("");*@
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <button type="submit" id="ButtonSubmit" class="btn btn-primary btn-sm">
+                    <i class="fa fa-check"></i> @ViewBag.ConfirmButton
+                </button>
+                <a href="~/Order" class="btn btn-default btn-sm">
+                    <i class="fa fa-times"></i> Cancel
+                </a>
+            </div>
+        </div>
+    </form>
+</div>

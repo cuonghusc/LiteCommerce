@@ -146,7 +146,8 @@ namespace LiteCommerce.DataLayers.SqlServer
                                 QuantityPerUnit = Convert.ToString(dbReader["QuantityPerUnit"]),
                                 UnitPrice = Convert.ToDouble(dbReader["UnitPrice"]),
                                 Descriptions = Convert.ToString(dbReader["Descriptions"]),
-                                PhotoPath = Convert.ToString(dbReader["PhotoPath"])
+                                PhotoPath = Convert.ToString(dbReader["PhotoPath"]),
+                                ProductAttributes = null,
                             };
                         }
                     }
@@ -343,12 +344,44 @@ namespace LiteCommerce.DataLayers.SqlServer
                 {
                     cmd2.Parameters["@AttributeName"].Value = attributeName[i];
                     cmd2.Parameters["@AttributeValues"].Value = attributeValues[i];
-                    cmd2.Parameters["@DisplayOrder"].Value = (displayOrder[i]) ==null?1: Convert.ToInt32(displayOrder[i]);
+                    cmd2.Parameters["@DisplayOrder"].Value = string.IsNullOrEmpty(displayOrder[i])?1: Convert.ToInt32(displayOrder[i]);
                     result += cmd2.ExecuteNonQuery();
                 }
                 connection.Close();
             }
             return result > 0;
+        }
+
+        public List<Product> GetAll()
+        {
+            List<Product> data = new List<Product>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.CommandText = @"SELECT * FROM Products";
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = connection;
+                    using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (dbReader.Read())
+                        {
+                            data.Add(new Product()
+                            {
+                                ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                                ProductName = Convert.ToString(dbReader["ProductName"]),
+                                QuantityPerUnit = Convert.ToString(dbReader["QuantityPerUnit"]),
+                                UnitPrice = Convert.ToDouble(dbReader["UnitPrice"]),
+                                Descriptions = Convert.ToString(dbReader["Descriptions"]),
+                                PhotoPath = Convert.ToString(dbReader["PhotoPath"]),
+                            });
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return data;
         }
     }
 }

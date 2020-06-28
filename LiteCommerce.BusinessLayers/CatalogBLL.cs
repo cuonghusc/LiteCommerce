@@ -128,6 +128,14 @@ namespace LiteCommerce.BusinessLayers
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public static List<Product> Product_GetAll()
+        {
+            return ProductDB.GetAll();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         public static int Customer_Add(Customer data)
@@ -169,6 +177,10 @@ namespace LiteCommerce.BusinessLayers
         public static bool Customer_Update(Customer data)
         {
             return CustomerDB.Update(data);
+        }
+        public static List<Customer> Customer_ListNoPagination()
+        {
+            return CustomerDB.GetAll();
         }
         /// <summary>
         /// 

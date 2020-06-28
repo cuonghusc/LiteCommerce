@@ -272,5 +272,33 @@ namespace LiteCommerce.DataLayers.SqlServer
             }
             return dem;
         }
+
+        public List<Customer> GetAll()
+        {
+            List<Customer> data = new List<Customer>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.CommandText = @"SELECT CustomerID, CompanyName FROM Customers";
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = connection;
+                    using (SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                    {
+                        while (dbReader.Read())
+                        {
+                            data.Add(new Customer()
+                            {
+                                CustomerID = Convert.ToString(dbReader["CustomerID"]),
+                                CompanyName = Convert.ToString(dbReader["CompanyName"]),                               
+                            });
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return data;
+        }
     }
 }
